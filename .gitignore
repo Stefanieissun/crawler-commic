@@ -1,0 +1,4 @@
+node_modules/
+src/commic/*
+dist/
+commic/
