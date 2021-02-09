@@ -1,5 +1,6 @@
 import {get} from 'https'
 import fs from 'fs'
+import path from 'path'
 export function getHtml(url:string):Promise<string>{
     return new Promise((resolve,reject)=>{
         get(url,res=>{
@@ -25,7 +26,7 @@ export function downImg(url:string,n:number,dest:string):Promise<string>{
     return new Promise((resolve,reject)=>{
         get(url,res=>{
             console.log(`开始下载,${dest}第${n}页`);
-            res.pipe(fs.createWriteStream(`commic/${dest}/${n}.jpg`)).on('finish',()=>{
+            res.pipe(fs.createWriteStream(path.join(__dirname,`../commic/${dest}/${n}.jpg`))).on('finish',()=>{
                 console.log(`${dest}第${n}页下载完成`);
                 resolve(`${url}第${n}页下载完成`);}).on('error',err=>resolve(err.message));
         }).on('error',err=>console.error(err)).on('timeout',()=>downImg(url,n,dest));

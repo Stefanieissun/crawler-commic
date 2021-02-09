@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import { downImg, getHtml, getPages } from './util';
 import fs from 'fs';
-
+import path from 'path'
 import PLimit from 'p-limit'
 
 
@@ -25,10 +25,10 @@ async function startDown(url:string,dir:string){
     const limit = PLimit(15);
     const input:any[] = [];
     for(const {msg,href} of imgUrls){
-        fs.mkdirSync(`commic/${dir}/${msg}`,{recursive:true});  
+        fs.mkdirSync(path.join (__dirname,`../commic/${dir}/${msg}`),{recursive:true});  
         const data = await getPages(href);
         for(let i in data ){
-            input.push(limit(()=>downImg(url,Number(i)+1,`${dir}/${msg}`)))
+            input.push(limit(()=>downImg(data[i],Number(i)+1,`${dir}/${msg}`)))
         }
     };
      console.log('over');
