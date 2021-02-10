@@ -1,14 +1,14 @@
 import cheerio from 'cheerio'
-import { downImg, getHtml, getPages } from './util';
-import fs from 'fs';
-import path from 'path'
-import PLimit from 'p-limit'
+import { getHtml } from './util';
+import {cpus} from 'os'
+import  { join } from 'path'
 
+import {fork} from 'child_process'
 
 
 
 const host = `https://www.leyuman.com`;
-
+const cpusNum = cpus().length;
 const huoyin = {url:`https://www.leyuman.com/comic/16784.html`,dir:'火影忍者'};
 const diyu = {url:`https://www.leyuman.com/comic/13960.html`,dir:'地狱老师'};
 const test = {url:`https://www.leyuman.com/comic/16812.html`,dir:'test'};
@@ -18,20 +18,18 @@ async function startDown(url:string,dir:string){
     const cheerioArrs: any[] = Array.from(($(`body > div.wrapper > div.comic-content > div.comic-content-list.clearfix > ul`)).children());
     const imgUrl = cheerioArrs.map(x => {
         const href = host + x.children[0].attribs.href;
-        const msg = x.children[0].children[0].data;
+        const msg:string = x.children[0].children[0].data;
         return {msg,href};
     });
     const imgUrls = imgUrl.reverse();
-    const limit = PLimit(15);
-    const input:any[] = [];
-    for(const {msg,href} of imgUrls){
-        fs.mkdirSync(path.join (__dirname,`../commic/${dir}/${msg}`),{recursive:true});  
-        const data = await getPages(href);
-        for(let i in data ){
-            input.push(limit(()=>downImg(data[i],Number(i)+1,`${dir}/${msg}`)))
-        }
-    };
-     console.log('over');
+    const num = Math.ceil(imgUrls.length/3);
+    console.log('num',num,'img',imgUrls.length);
+    for(let i=0;i<cpusNum;i++){
+        const p = fork(join(__dirname,'./app.ts'));
+        const t = imgUrls.splice(0,num);
+        p.stderr?.on('data',t=>console.log(t))
+        p.send({imgUrls:t,dir});
+    }
 }
 
-startDown(diyu.url,diyu.dir);
+startDown(huoyin.url,huoyin.dir);
