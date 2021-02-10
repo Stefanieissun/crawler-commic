@@ -2,7 +2,6 @@ import cheerio from 'cheerio'
 import { getHtml } from './util';
 import {cpus} from 'os'
 import  { join } from 'path'
-
 import {fork} from 'child_process'
 
 
@@ -23,7 +22,6 @@ async function startDown(url:string,dir:string){
     });
     const imgUrls = imgUrl.reverse();
     const num = Math.ceil(imgUrls.length/3);
-    console.log('num',num,'img',imgUrls.length);
     for(let i=0;i<cpusNum;i++){
         const p = fork(join(__dirname,'./app.ts'));
         const t = imgUrls.splice(0,num);
