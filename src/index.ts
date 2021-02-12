@@ -21,7 +21,7 @@ async function startDown(url:string,dir:string){
         return {msg,href};
     });
     const imgUrls = imgUrl.reverse();
-    const num = Math.ceil(imgUrls.length/3);
+    const num = Math.ceil(imgUrls.length/cpusNum);
     for(let i=0;i<cpusNum;i++){
         const p = fork(join(__dirname,'./app.ts'));
         const t = imgUrls.splice(0,num);
@@ -30,4 +30,4 @@ async function startDown(url:string,dir:string){
     }
 }
 
-startDown(huoyin.url,huoyin.dir);
+startDown(diyu.url,diyu.dir);

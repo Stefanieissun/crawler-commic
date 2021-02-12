@@ -25,10 +25,11 @@ export function downImg(url:string,n:number,dest:string):Promise<string>{
     // console.log('dest',dest);
     return new Promise((resolve,reject)=>{
         get(url,res=>{
-            console.log(`开始下载,${dest}第${n}页`);
+            // console.log(`开始下载,${dest}第${n}页`);
             res.pipe(fs.createWriteStream(path.join(__dirname,`../commic/${dest}/${n}.jpg`))).on('finish',()=>{
                 console.log(`${dest}第${n}页下载完成`);
-                resolve(`${url}第${n}页下载完成`);}).on('error',err=>resolve(err.message));
+                // fs.appendFileSync('./a.txt',`${dest}第${n}页下载完成\n`);
+                resolve(`${url}第${n}页下载完成`);}).on('error',err=>downImg(url,n,dest));
         }).on('error',err=>console.error(err)).on('timeout',()=>downImg(url,n,dest));
     })   
 }

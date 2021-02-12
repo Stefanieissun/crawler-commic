@@ -12,12 +12,12 @@ async function downJpg(imgUrls:{msg:string,href:string}[],dir:string){
             input.push(limit(async()=>await downImg(data[i],Number(i)+1,`${dir}/${msg}`)))
         }
     }
-    await Promise.all(input);
-    process.exit();
+   return await Promise.all(input);
+    // process.exit();
 }
 
 
-process.on('message',param=>{
+process.on('message',async param=>{
     const {imgUrls,dir} = param;
-    downJpg(imgUrls,dir);
+   await downJpg(imgUrls,dir);
 })
