@@ -32,8 +32,11 @@ export function downImg(url: string, n: number, dest: string): Promise<string> {
             res.pipe(fs.createWriteStream(path.join(__dirname, `../commic/${dest}/${n}.jpg`))).on('finish', () => {
                 console.log(`${dest}第${n}页下载完成`);
                 resolve(`${url}第${n}页下载完成`);
-            }).on('error', err => downImg(url, n, dest));
-        }).on('error', err => console.error(err)).on('timeout', () => downImg(url, n, dest));
+            }).on('error', err => {delete (global as any).data[url];});
+        }).on('error', err => {delete (global as any).data[url];}).on('timeout', () => {delete (global as any).data[url];})
+        .on('finish',()=>{
+            delete (global as any).data[url];
+        });
     })
 }
 
